@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Blast Post</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <h3>Search Tweet</h3>
+    <form action="/twitter" id="form-tweet-search">
+      <label for="search">Search Tweet</label><br>
+      <input type="text" name="search" value=""><br>
+      <button type="button" onclick="searchTweet()">Search!</button>
+    </form>
+    <div class="result-tweet"></div>
+
+    <h3>Recent</h3>
+    <div class="tweet"></div>
+
+    <h3>Post</h3>
+    <form action="/twitter" id="form-tweet">
+      <textarea name="tweet" rows="8" cols="80"></textarea><br>
+      <button type="button" onclick="postTweet()">Post</button>
+    </form>
+
+    <script type="text/javascript">
+      function searchTweet(){
+        let tweet = $('#form-tweet-search').serialize();
+        let data = tweet.split("=");
+        $.ajax({
+          method: "post",
+          url: "http://localhost:3000/twitter/search",
+          data: {tweet: data[1]},
+          success: (data) => {
+            data.forEach((dataTweet) => {
+              $(".result-tweet").append('<ul id="list"><li>'+dataTweet.text+'</li></ul>')
+            })
+          }
+        })
+      }
+      function postTweet(){
+        let tweet = $('#form-tweet').serialize();
+        let data = tweet.split("=");
+        $.ajax({
+          method: "post",
+          url: "http://localhost:3000/twitter",
+          data: {tweet: data[1]},
+          success: (data) => {
+            $(".tweet").prepend('<ul id="list"><li>'+data+'</li></ul>');
+            $("#form-tweet")[0].reset();
+          }
+        })
+      }
+
+      $( document ).ready(function() {
+          $.ajax({
+            method: "GET",
+            url: "http://localhost:3000/twitter",
+            success: (data) => {
+              data.forEach((tweet) => {
+                $('.tweet').append('<ul id="list"><li>'+tweet.text+'</li></ul>');
+              })
+            }
+          })
+      });
+    </script>
+  </body>
+</html>

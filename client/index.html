@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Login</title>
+    <script type="text/javascript" src="./public/js/codebird.js"></script>
+    <script type="text/javascript">
+    var cb = new Codebird;
+    cb.setConsumerKey("tkzJXMBITIvJF6jKUHE5HHpbt", "tOJuM9OjNVM6Nbsihs3vOeXgenQ6cMN1qcOvuU42no4zb32JyS");
+    var current_url = location.toString();
+    // console.log(current_url.match(/\?(.+)$/));
+    var query       = current_url.match(/\?(.+)$/).split("&amp;");
+    var parameters  = {};
+    var parameter;
+
+    for (var i = 0; i < query.length; i++) {
+        parameter = query[i].split("=");
+        if (parameter.length === 1) {
+            parameter[1] = "";
+        }
+        parameters[decodeURIComponent(parameter[0])] = decodeURIComponent(parameter[1]);
+    }
+
+    // check if oauth_verifier is set
+    if (typeof parameters.oauth_verifier !== "undefined") {
+        // assign stored request token parameters to codebird here
+        // ...
+        cb.setToken(stored_somewhere.oauth_token, stored_somewhere.oauth_token_secret);
+
+        cb.__call(
+            "oauth_accessToken",
+            {
+                oauth_verifier: parameters.oauth_verifier
+            },
+            function (reply, rate, err) {
+                if (err) {
+                    console.log("error response or timeout exceeded" + err.error);
+                }
+                if (reply) {
+                    cb.setToken(reply.oauth_token, reply.oauth_token_secret);
+                }
+
+                // if you need to persist the login after page reload,
+                // consider storing the token in a cookie or HTML5 local storage
+            }
+        );
+    }
+    </script>
+  </head>
+  <body>
+
+  </body>
+</html>
